@@ -1,84 +1,93 @@
 <% layout("/layouts/boilerplate") -%> 
 <body>
-<h3>Create a new Listing</h3>
+    <div class="row">
+        <div class="col-8 offset-2">
+            <h3>Create a new Listing</h3>
 
-<form action="/listings" method="post"> 
-    <div class="row"> 
-        <div class="col-8 offset-2"> 
+            <form action="/listings" method="post"> 
+                <% try { %>
+                    <div class="col-8 offset-2"> 
 
-            <!-- Input field for the title -->
-            <div class="mb-3">
-                <label for="title" class="form-label">Title</label><br>
-                <input 
-                    type="text" 
-                    name="listing[name]" 
-                    placeholder="Title" 
-                    class="form-control"
-                >
-            </div>
+                        <!-- Input field for the title -->
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Title</label><br>
+                            <input 
+                                type="text" 
+                                name="listing[title]" 
+                                placeholder="Title" 
+                                class="form-control"
+                                
+                            />
+                        </div>
 
-            <!-- Text area for the description -->
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label><br>
-                <textarea 
-                    name="listing[description]"  
-                    placeholder="Description"
-                    class="form-control"
-                ></textarea>
-            </div>
+                        <!-- Text area for the description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label><br>
+                            <textarea 
+                                name="listing[description]"  
+                                placeholder="Description"
+                                class="form-control"
+                                 
+                            ></textarea>
+                        </div>
 
-            <!-- Input field for the image URL -->
-            <div class="mb-3">
-                <label for="image" class="form-label">Image</label>
-                <input 
-                    type="text" 
-                    name="listing[image]" 
-                    placeholder="Enter image URL"
-                    class="form-control"
-                >
-            </div>
+                        <!-- Input field for the image URL -->
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image</label>
+                            <input 
+                                type="text" 
+                                name="listing[image]" 
+                                placeholder="Enter image URL"
+                                class="form-control"
+                            >
+                        </div>
 
-            <!-- Price and Country inputs in the same row -->
-            <div class="row">
-                <div class="mb-3 col-md-6">
-                    <!-- Price input -->
-                    <label for="price" class="form-label">Price</label><br>
-                    <input 
-                        type="number" 
-                        name="listing[price]"
-                        placeholder="1200"
-                        class="form-control"
-                    >
-                </div>
-            
-                <div class="mb-3 col-md-6">
-                    <!-- Country input -->
-                    <label for="country" class="form-label">Country</label><br>
-                    <input 
-                        type="text" 
-                        name="listing[country]" 
-                        placeholder="India" 
-                        class="form-control"
-                    >
-                </div>
-            </div>
-            
+                        <!-- Price and Country inputs in the same row -->
+                        <div class="row">
+                            <div class="mb-3 col-md-6">
+                                <!-- Price input -->
+                                <label for="price" class="form-label">Price</label><br>
+                                <input 
+                                    type="number" 
+                                    name="listing[price]"
+                                    placeholder="1200"
+                                    class="form-control"
+                                >
+                            </div>
+                        
+                            <div class="mb-3 col-md-6">
+                                <!-- Country input -->
+                                <label for="country" class="form-label">Country</label><br>
+                                <input 
+                                    type="text" 
+                                    name="listing[country]" 
+                                    placeholder="India" 
+                                    class="form-control"
+                                >
+                            </div>
+                        </div>
+                        
 
-            <!-- Input field for the location -->
-            <div class="mb-3">
-                <label for="location" class="form-label">Location</label><br>
-                <input 
-                    type="text" 
-                    name="listing[location]" 
-                    placeholder="Bengaluru, Karnataka"
-                    class="form-control"
-                >
-            </div>
-           
-            <!-- Button to submit the form -->
-            <button class="btn btn-dark">Add</button>
-            <br>
-        </form>
+                        <!-- Input field for the location -->
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label><br>
+                            <input 
+                                type="text" 
+                                name="listing[location]" 
+                                placeholder="Bengaluru, Karnataka"
+                                class="form-control"
+                            >
+                        </div>
+                    
+                        <!-- Button to submit the form -->
+                        <button class="btn btn-dark add-btn mt-3">Add</button>
+                        <br>
+                    </div> 
+                <% } catch(err) { %>
+                    <!-- Error message display -->
+                    <p>Error: <%= err.message %></p>
+                <% } %>
+            </form>
         </div> 
-    </div> 
+    </div>
 </body>
