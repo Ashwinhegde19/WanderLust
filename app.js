@@ -7,6 +7,7 @@ const methodOverride = require("method-override")
 const ejsMate  = require("ejs-mate")
 const wrapAsync = require("./utils/wrapAsync.js")
 const ExpressError = require("./utils/ExpressError.js")
+const {listingSchema} = require("./schema.js")
 
 const MONGO_URL = "mongodb://localhost:27017/wanderlust"
 
@@ -51,8 +52,10 @@ app.get("/listings/:id", wrapAsync(async (req, res) => {
 
 // create Route
 app.post("/listings", wrapAsync(async(req, res, next) => {
-        if(!req.body.listing){
-            throw new ExpressError(400, "Send Valid Data for Listing")
+        let result = listingSchema.validate(req.body)
+        console.log(result);
+        if(result.error){
+            throw new ExpressError(400, result.error)
         }
         const  newListing = new Listing(req.body.listing);
         await newListing.save();
@@ -106,7 +109,8 @@ app.all("*", function(req, res, next){
 
 app.use((err, req, res, next) => {
     let {statusCode=500, message="Internal Error"} = err;
-    res.status(statusCode).send(message);
+    res.status(statusCode).render("error.ejs", {message})
+    // res.status(statusCode).send(message);
 })
 
 
