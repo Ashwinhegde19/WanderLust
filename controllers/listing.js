@@ -29,13 +29,12 @@ module.exports.showListing = async (req, res) => {
 };
 
 module.exports.createListing = async (req, res, next) => {
-  let result = listingSchema.validate(req.body);
-  console.log(result);
-  if (result.error) {
-    throw new ExpressError(400, result.error);
-  }
+  let url = req.file.path;
+  let filename = req.file.filename;
+
   const newListing = new Listing(req.body.listing);
   newListing.owner = req.user._id;
+  newListing.image = { url, filename };
   await newListing.save();
   req.flash("success", "Your listing has been created!");
   res.redirect("/listings");
