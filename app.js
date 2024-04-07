@@ -1,4 +1,9 @@
-require('dotenv').config()
+if (process.env.NODE_ENV != "production") {
+  require("dotenv").config();
+} 
+
+
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -45,11 +50,6 @@ const sessionOption = {
     httpOnly: true
   }
 }
-
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
 
 app.use(session(sessionOption))
 app.use(flash())
