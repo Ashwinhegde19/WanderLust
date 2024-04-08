@@ -36,7 +36,9 @@ const listingSchema = new Schema({
       required: true
     }
   },
-  
+  category: {
+    type: [String],
+  },
  
 });
 

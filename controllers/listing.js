@@ -37,7 +37,7 @@ module.exports.createListing = async (req, res, next) => {
       limit: 1,
     })
     .send();
-    // console.log(response.body.features[0].geometry);
+    console.log(response.body.features[0].geometry);
   let url = req.file.path;
   let filename = req.file.filename;
 
@@ -65,18 +65,113 @@ module.exports.renderEditForm = async (req, res) => {
   res.render("listings/edit.ejs", { listing, originalImageUrl });
 };
 
+// module.exports.updateListing = async (req, res) => {
+//   let { id } = req.params;
+//   const updateListing = await Listing.findByIdAndUpdate(id, req.body.listing);
+//   if (typeof req.file !== "undefined") {
+//     let url = req.file.path;
+//     let filename = req.file.filename;
+//     updateListing.image = { url, filename };
+//     await updateListing.save();
+//   }
+//   req.flash("success", "Your listing was updated.");
+//   res.redirect(`/listings/${updateListing._id}`);
+// };
+
 module.exports.updateListing = async (req, res) => {
   let { id } = req.params;
-  const updateListing = await Listing.findByIdAndUpdate(id, req.body.listing);
-  if (typeof req.file !== "undefined") {
+  let coordinate = await geocodingClient
+    .forwardGeocode({
+      query: ` ${req.body.listing.location},${req.body.listing.country}`,
+      limit: 2,
+    })
+    .send();
+
+  req.body.listing.geometry = coordinate.body.features[0].geometry;
+  let updatedListing = await Listing.findByIdAndUpdate(id, req.body.listing);
+
+  if (req.file) {
     let url = req.file.path;
     let filename = req.file.filename;
-    updateListing.image = { url, filename };
-    await updateListing.save();
+    updatedListing.image = { url, filename };
+    updatedListing.save();
   }
-  req.flash("success", "Your listing was updated.");
-  res.redirect(`/listings/${updateListing._id}`);
+  req.flash("success", "Listing Updated !!");
+  res.redirect(`/listings/${id}`);
 };
+
+
+
+module.exports.search = async (req, res) => {
+  console.log(req.query.q);
+  let input = req.query.q.trim().replace(/\s+/g, " ");
+  console.log(input);
+  if (input == "" || input == " ") {
+    req.flash("error", "Search value empty !!!");
+    res.redirect("/listings");
+  }
+
+  let data = input.split("");
+  let element = "";
+  let flag = false;
+  for (let index = 0; index < data.length; index++) {
+    if (index == 0 || flag) {
+      element = element + data[index].toUpperCase();
+    } else {
+      element = element + data[index].toLowerCase();
+    }
+    flag = data[index] == " ";
+  }
+  console.log(element);
+  let allListings = await Listing.find({
+    title: { $regex: element, $options: "i" },
+  });
+  if (allListings.length != 0) {
+    res.locals.success = "Listings searched by Title";
+    res.render("listings/index.ejs", { allListings });
+    return;
+  }
+
+  if (allListings.length == 0) {
+    allListings = await Listing.find({
+      category: { $regex: element, $options: "i" },
+    }).sort({ _id: -1 });
+    if (allListings.length != 0) {
+      res.locals.success = "Listings searched by Category";
+      res.render("listings/index.ejs", { allListings });
+      return;
+    }
+  }
+  if (allListings.length == 0) {
+    allListings = await Listing.find({
+      country: { $regex: element, $options: "i" },
+    }).sort({ _id: -1 });
+    if (allListings.length != 0) {
+      res.locals.success = "Listings searched by Location";
+      res.render("listings/index.ejs", { allListings });
+      return;
+    }
+  }
+
+  const intValue = parseInt(element, 10);
+  const intDec = Number.isInteger(intValue);
+
+  if (allListings.length == 0 && intDec) {
+    allListings = await Listing.find({ price: { $lte: element } }).sort({
+      price: 1,
+    });
+    if (allListings.length != 0) {
+      res.locals.success = `Listings searched for less than Rs ${element}`;
+      res.render("listings/index.ejs", { allListings });
+      return;
+    }
+  }
+  if (allListings.length == 0) {
+    req.flash("error", "Listings is not here !!!");
+    res.redirect("/listings");
+  }
+};
+
 module.exports.destroyListing = async (req, res) => {
   let { id } = req.params;
   let deleted = await Listing.findByIdAndDelete(id);

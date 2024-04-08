@@ -1,3 +1,5 @@
+
+
 <% layout("/layouts/boilerplate")%>
 
 <style>
@@ -103,24 +105,33 @@
 
   </div>
 
-    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1">
-        <% for(let listing of allListings) { %>
-            <a href="/listings/<%= listing._id %>" class="listing-link">
-            <div class="card col lisitng-card">
-                <img src="<%= listing.image.url %>" class="card-img-top" alt="listing image" style="height: 20rem;">
-                <div class="card-img-overlay"></div>
-                <div class="card-body">
-                  <p class="card-text">
-                    <b>Title : <%= listing.title %><br/></b>
-                     Price : &#8377; <%= listing.price.toLocaleString("en-IN") %> / night
-                     <i class="tax-info"> &nbsp; &nbsp;+18% GST</i>
-        
-                </p>
-                </div>
-              </div>
-            </a>
-              <% } %>
-    </div>  
+
+<div class="row row-cols-lg-3 row-cols-md-3 mt-3 row-cols-sm-1">
+  <% for(let listing of allListings) { %>
+
+    <a href="/listings/<%= listing._id%>" class="listing-link"> 
+    <div class="card col listing-card">
+      <img 
+        class="card-img-top" 
+        src="<%= listing.image.url %>" 
+        alt="listing_image" 
+        style="height: 20rem" />
+
+      <div class="card-img-overlay"> <i><b><u> WanderLust</u></b></i></div>
+
+      <div class="card-body">
+        <p class="card-text">
+           <b><%= listing.title %></b> <br>
+           &#8377; <%= listing.price  %> /Night
+           <i class="tax-info">&nbsp;+18% GST</i>
+        </p>
+      </div>
+
+    </div>
+    </a>
+  <% } %>
+
+</div>
 
 <script>
   let taxSwitch = document.getElementById("flexSwitchCheckDefault");
@@ -137,3 +148,4 @@
     }
   });
 </script>
+
